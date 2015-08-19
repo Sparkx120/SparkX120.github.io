@@ -12,7 +12,7 @@ function runKockCurveOnCanvas2D(canvas2D){
 	var line2 = [{x1: 502, y1:150, x2:256, y2:502}];
 	var line3 = [{x1: 256, y1:502, x2:10, y2:150}]
 
-	var iterations = 6;
+	var iterations = 4;
 	line1 = kochCurve(line1, iterations);
 	line2 = (kochCurve(line2, iterations));
 	line3 = (kochCurve(line3, iterations));

@@ -3,6 +3,7 @@
  * Automatically deploys a canvas to the body
  * @author  James Wake (SparkX120)
  * @version 0.1 (2015/07)
+ * @license MIT
  */
 function Canvas2D(){
 	// //Create the Canvas and Deploy it
@@ -18,12 +19,13 @@ function Canvas2D(){
 	this.rect = this.canvas.getBoundingClientRect();
 	$(window).on('resize', function(event){
 		this.rect = this.canvas.getBoundingClientRect();
-		this.canvas.width = rect.width;
-		this.canvas.height = rect.height;
+		this.canvas.width = this.rect.width;
+		this.canvas.height = this.rect.height;
 	}.bind(this));
 	this.canvas.width = this.rect.width;
 	this.canvas.height = this.rect.height;
-
+	this.width = this.rect.width;
+	this.height = this.rect.height;
 	//Persistant Pixel Image Data Object
 	this.pixelImageData = this.context.createImageData(1,1);
 	// this.pixelData = this.pixelImageData.data
@@ -34,13 +36,14 @@ function Canvas2D(){
  * @param  {{x: Number, y: Number, r: Number, g: Number, b: Number, a: Number}} pixel The Pixel to draw
  */
 Canvas2D.prototype.drawPixel = function(pixel){
-	setTimeout(function(){
+	// setTimeout(function(){
+		//console.log("this Happened", pixel.r, pixel.g, pixel.b, pixel.a);
 		this.pixelImageData.data[0] = pixel.r;
 		this.pixelImageData.data[1] = pixel.g;
 		this.pixelImageData.data[2] = pixel.b;
 		this.pixelImageData.data[3] = pixel.a;
 		this.context.putImageData(this.pixelImageData, pixel.x, pixel.y);
-	}.bind(this),0);
+	// }.bind(this),0);
 }
 
 Canvas2D.prototype.drawLine = function(line){
