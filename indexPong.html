@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<title>Leap Test</title>
+		<script src="http://js.leapmotion.com/leap-0.6.3.min.js"></script>
+		<link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+		<style>
+			canvas{
+				position:      relative;
+				width:         100%;
+				height:        85%;
+			}
+			div{
+				float:         left;
+				width:         80%;
+				height:        5%;
+				margin-bottom: 2%;
+				font-size:     3em;
+				text-align:    center;
+				font-family:   'Press Start 2P', cursive;
+			}
+			#footer{
+				height:        2%;
+				width:         100%;
+				margin-top:    1%;
+				font-size:     1em;
+				text-align:    center;
+				font-family:   'Press Start 2P', cursive;
+			}
+			#leftScore{
+				text-align:    left;
+				width:         10%;
+			}
+			#rightScore{
+				text-align:    right;
+				width:         10%;
+			}
+		</style>
+	</head>
+	<body>
+		<!--<h1>Leap Test</h1>-->
+		<div id="leftScore">0</div>
+		<div id="title">LeapPong</div>
+		<div id="rightScore">0</div>
+		<canvas id="canvas"></canvas>
+		<div id="footer"> Copyright (c) 2015 <a href="https://github.com/Sparkx120">SparkX120</a></div>
+	    <script src="leappong.js"></script>
+	</body>
+</html>
