@@ -1,6 +1,30 @@
 'use strict'
 
 /**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 SparkX120 (James Wake)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
+
+/**
  * Ball Object representing any ball type object
  */
 class Ball {
@@ -360,19 +384,21 @@ class Pong {
       this.ball.vec = {x:-5,y:0}
     }
     
-    if(this.ball.y < 0 + this.ball.rad){
+    var newVec = this.ball.vec;
+    if(this.ball.y < 0 + this.ball.rad && this.ball.vec.y < 0){
       //bounce mirror
       this.ball.vec.y = -this.ball.vec.y;
     }
     
-    if(this.ball.y > this.canvas.height - this.ball.rad){
+    if(this.ball.y > this.canvas.height - this.ball.rad && this.ball.vec.y > 0){
       //bounce mirror
       this.ball.vec.y = -this.ball.vec.y;
     }
     
     //Handle Paddle Collisions
     if((this.ball.x < this.leftPaddle.x + this.leftPaddle.width + this.ball.rad) &&
-       (this.ball.y > this.leftPaddle.y && this.ball.y < this.leftPaddle.y + this.leftPaddle.length)){
+       (this.ball.y > this.leftPaddle.y && this.ball.y < this.leftPaddle.y + this.leftPaddle.length) &&
+       this.ball.vec.x < 1){
       //bounce
       this.ball.vec.x = -this.ball.vec.x
       let yreflectmod = this.ball.y - (this.leftPaddle.y + this.leftPaddle.length/2);
@@ -382,11 +408,12 @@ class Pong {
       if(yreflectmod < -2){
         yreflectmod = -2;
       }
-      this.ball.vec.y = this.ball.vec.y + yreflectmod; 
+      this.ball.vec.y = this.ball.vec.y + yreflectmod;
     }
     
     if((this.ball.x > this.rightPaddle.x - this.ball.rad) && 
-       (this.ball.y > this.rightPaddle.y && this.ball.y < this.rightPaddle.y + this.rightPaddle.length)){
+       (this.ball.y > this.rightPaddle.y && this.ball.y < this.rightPaddle.y + this.rightPaddle.length) &&
+       this.ball.vec.x > 1){
       //bounce
       this.ball.vec.x = -this.ball.vec.x
       let yreflectmod = this.ball.y - (this.rightPaddle.y + this.rightPaddle.length/2);
