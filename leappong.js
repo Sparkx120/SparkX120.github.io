@@ -462,6 +462,9 @@ class Pong {
       if(this.rightController.handDetected){
         this.inPlay = true;
       }
+      if(this.oldSkool.oldSkoolMode){
+        this.inPlay = true;
+      }
       if(this.inPlay){
         this.gameStep();
         this.newGameShowing = false;
