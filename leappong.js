@@ -324,11 +324,11 @@ class AIController extends Controller{
     //Use our own interval synced with the sample rate
     this.interval = setInterval(()=>{
       //Figure out where our paddle is relative to ball in y axis with a threshold
-      let top = this.paddle.y + this.paddle.length/2 - 25;
-      let bottom = this.paddle.y + this.paddle.length/2 + 25;
+      let top = this.paddle.y + this.paddle.length/2;
+      let bottom = this.paddle.y + this.paddle.length/2;
       
       //If top is too high move down
-      if(top < this.ball.y){
+      if(top < this.ball.y ){
         this.direction = 1;
         this.timestamp = Date.now();
       }
@@ -340,6 +340,11 @@ class AIController extends Controller{
       
       //If within range dont move
       if(top > this.ball.y && bottom < this.ball.y){
+        this.direction = 0;
+        this.timestamp = Date.now();
+      }
+      
+      if(top > this.ball.y - 25 && bottom < this.ball.y + 25 && this.ball.vec.y < 0.5){
         this.direction = 0;
         this.timestamp = Date.now();
       }
