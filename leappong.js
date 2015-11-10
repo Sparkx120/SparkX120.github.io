@@ -414,7 +414,7 @@ class Pong {
     
     this.canvas.canvasElem.onclick = ()=>{
       this.inPlay = !this.inPlay;
-      this.oldSkool.oldSkoolMode = true;
+      //this.oldSkool.oldSkoolMode = true; //this seems confusing since it says to hit space for oldSkool
       if(!this.inPlay){
         this.leftScr = 0;
         this.rightScr = 0;
