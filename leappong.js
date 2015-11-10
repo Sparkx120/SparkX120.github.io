@@ -249,6 +249,35 @@ class KeyboardController extends Controller{
   }
 }
 
+/**
+ * For the slightly less old school kids who don't use Leap Motion?
+ */
+class TouchController extends Controller{
+  constructor(args){
+    super(args);
+    this.oldSkoolMode = false;
+    
+    this.paddle = args.paddle;
+    this.canvas = args.canvas;
+    //less acient method for listening for touches
+    document.getElementById('canvas').addEventListener('touchmove', (event) => {
+      // If there's exactly one finger inside this element
+      if (event.targetTouches.length == 1) {
+        var touch = event.targetTouches[0];
+        let y = touch.pageY - this.canvas.rect.top - this.paddle.length/2;
+        if(y > this.paddle.y){
+          this.direction = 1
+          this.timestamp = Date.now();
+        }
+        if(y < this.paddle.y){
+          this.direction = -1
+          this.timestamp = Date.now();
+        }
+      }
+    }, false);
+  }
+}
+
 
 
 /**
@@ -412,6 +441,11 @@ class Pong {
     //For those who want to be old school
     this.oldSkool = new KeyboardController({sampleFreq: 1000}); //Low Sample so as to allow for keyup
     
+    //For those who want to be slightly less old school //Not enough time to finish
+    // this.lessOldSkool = new TouchController({sampleFreq: this.framerate, //Sample rate is ignored by Touch
+    //                                          paddle:this.rightPaddle,
+    //                                          canvas:this.canvas});
+    
     this.canvas.canvasElem.onclick = ()=>{
       this.inPlay = !this.inPlay;
       //this.oldSkool.oldSkoolMode = true; //this seems confusing since it says to hit space for oldSkool
@@ -451,6 +485,7 @@ class Pong {
     //Update Controller input
     this.leftController.intervalFunc(now);
     this.oldSkool.intervalFunc(now);
+    // this.lessOldSkool.intervalFunc(now);
     this.rightController.intervalFunc(now);
     
     //Get oldSkool mode from Keyboard Controller
@@ -460,8 +495,16 @@ class Pong {
     this.leftPaddle.direction = this.leftController.direction;
     if(this.oldSkoolMode)
       this.rightPaddle.direction = this.oldSkool.direction;
-    else
-      this.rightPaddle.direction = this.rightController.direction;
+    else{
+      //console.log(this.lessOldSkool.timestamp > this.rightController.timestamp);
+      // if(this.lessOldSkool.timestamp > this.rightController.timestamp){
+        // this.rightPaddle.direction = this.lessOldSkool.direction;
+      // }
+      // else{
+        this.rightPaddle.direction = this.rightController.direction;
+      // }
+    }
+    //console.log(this.rightPaddle.direction);
     
     //Update the positions of the Round thing and the Paddles
     this.ball.timeStep();
