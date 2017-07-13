@@ -1,68 +1,1555 @@
-/*
- MIT
- MIT
- MIT
- MIT
- MIT
- MIT
- MIT
- MIT
- MIT
- MIT
-*/
-function Math3D(){}
-Math3D.rotateOnArbitrary=function(b,a){var e=Math.cos(Math.PI/180*b),c=Math.sin(Math.PI/180*b),d=Math3D.normalizeVector(a),f=new Number[4][4];f[0][0]=0;f[0][1]=-d.z();f[0][2]=d.y();f[0][3]=0;f[1][0]=d.z();f[1][1]=0;f[1][2]=-d.x();f[1][3]=0;f[2][0]=-d.y();f[2][1]=d.x();f[2][2]=0;f[2][3]=0;f[3][0]=0;f[3][1]=0;f[3][2]=0;f[3][3]=1;return Math3D.addMatrix(Matrices3D.I,MatrixMath3D.addMatrix(Math3D.scalarMultiplyMatrix(f,c)),Math3D.scalarMultiplyMatrix(Math3D.multiplyMatrixWithMatrix(f,f),1-e))};
-Math3D.vectorizePoints=function(b,a){var e=Math3D.subtractPoints(b,a);e.h=0;return e};Math3D.crossProduct=function(b,a){return{x:b.y*a.z-b.z*a.y,y:b.z*a.x-b.x*a.z,z:b.x*a.y-b.y*a.x,h:0}};Math3D.dotProduct=function(b,a){return b.x*a.x+b.y*a.y+b.z*a.z+b.h*a.h};Math3D.scalarMultiply=function(b,a){return{x:b.x*a,y:b.y*a,z:b.z*a,h:b.h*a}};Math3D.magnitudeOfVector=function(b){return Math.sqrt(b.x*b.x+b.y*b.y+b.z*b.z+b.h*b.h)};Math3D.addPoints=function(b,a){return{x:b.x+a.x,y:b.y+a.y,z:b.z+a.z,h:b.h+a.h}};
-Math3D.addVectors=function(b,a){return Math3D.addPoints(b,a)};Math3D.subtractPoints=function(b,a){return{x:b.x-a.x,y:b.y-a.y,z:b.z-a.z,h:1}};Math3D.normalizeVector=function(b){var a={},a=Math3D.magnitudeOfVector(b);return a=Math3D.scalarMultiply(b,1/a)};Math3D.initMatrix=function(b,a){var e=[];if(b&&a)for(var c=0;c<b;c++){for(var d=[],f=0;f<a;f++)d.push(0);e.push(d)}else for(c=0;4>c;c++)e.push([0,0,0,0]);return e};
-Math3D.addMatrix=function(b,a){for(var e=this.initMatrix(),c=0;4>c;c++)for(var d=0;4>d;d++)e[c][d]=b[c][d]+a[c][d];return e};Math3D.scalarMultiplyMatrix=function(b,a){for(var e=this.initMatrix(),c=0;4>c;c++)for(var d=0;4>d;d++)e[c][d]=b[c][d]*a;return e};Math3D.multiplyMatrices=function(b,a){for(var e=this.initMatrix(),c=0;4>c;c++)for(var d=0;4>d;d++){for(var f=0,g=0;4>g;g++)f+=b[c][g]*a[g][d];e[c][d]=f}return e};
-Math3D.multiplyVectorByMatrix=function(b,a){return{x:a.x*b[0][0]+a.y*b[0][1]+a.z*b[0][2]+a.h*b[0][3],y:a.x*b[1][0]+a.y*b[1][1]+a.z*b[1][2]+a.h*b[1][3],z:a.x*b[2][0]+a.y*b[2][1]+a.z*b[2][2]+a.h*b[2][3],h:a.x*b[3][0]+a.y*b[3][1]+a.z*b[3][2]+a.h*b[3][3]}};Math3D.matrixCofactor=function(b,a,e){for(var c=this.initMatrix(b.length-1,b.length-1),d=0,f=0,g=0;g<c.length&&d<b.length;g++){g==a&&(d=g+1);for(var h=0;h<c.length&&f<b.length;h++)h==e&&(f=h+1),c[g][h]=b[d][f],f++;f=0;d++}return c};
-Math3D.matrixDeterminate=function(b){if(2==b.length)return b[0][0]*b[1][1]-b[0][1]*b[1][0];for(var a=0,e=0;e<b.length;e++)var c=Math.floor(Math.pow(-1,e)),a=a+c*b[0][e]*this.matrixDeterminate(this.matrixCofactor(b,0,e));return a};Math3D.matrixPTranspose=function(b){for(var a=this.initMatrix(b[0].length,b.length),e=0;e<b.length;e++)for(var c=0;c<b[0].length;c++)a[c][e]=b[e][c];return a};
-Math3D.matrixAdjugate=function(b){if(3>b.length)return null;for(var a=this.initMatrix(b.length,b.length),e=0;e<b.length;e++)for(var c=0;c<b.length;c++){var d=Math.floor(Math.pow(-1,e+c));a[e][c]=d*this.matrixDeterminate(this.matrixCofactor(b,e,c))}return this.matrixPTranspose(a)};Math3D.matrixInverse=function(b){var a=this.matrixDeterminate(b);b=this.matrixAdjugate(b);return this.scalarMultiplyMatrix(b,1/a)};
-var Matrices3D={I:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],testA:[[2,3,1,5],[1,0,3,1],[0,2,-3,2],[0,2,3,1]],testAV:[[18,-35,-28,1],[9,-18,-14,1],[-2,4,3,0],[-12,24,19,-1]]};function matrixInversionTest(){var b=Matrices3D.testA;console.log(matrixToString(b));for(var b=Math3D.matrixInverse(b),a=!0,e=0;4>e;e++)for(var c=0;4>c;c++)b[e][c]!=Matrices3D.testAV[e][c]&&(a=!1);console.log(a,"\n",matrixToString(b))}
-function matrixToString(b){for(var a="",e=0;e<b.length;e++){for(var c=0;c<b[0].length;c++)a+=b[e][c]+" ";a+="\n"}return a}"use strict";var _createClass=function(){function b(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1;d.configurable=!0;"value"in d&&(d.writable=!0);Object.defineProperty(a,d.key,d)}}return function(a,e,c){e&&b(a.prototype,e);c&&b(a,c);return a}}();
-function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}
-var Canvas2D=function(){function b(){_classCallCheck(this,b);this.container=document.createElement("div");this.canvas=document.createElement("canvas");this.canvas.style.border="1px solid black";this.canvas.style.width="100%";this.canvas.style.height="100%";this.canvas.style.position="absolute";this.container.style.margin="5%";this.container.style.width="90%";this.container.style.height=.8*window.innerHeight+"px";this.container.style.position="relative";this.context=this.canvas.getContext("2d");this.container.appendChild(this.canvas);
-document.body.appendChild(this.container);this.rect=this.canvas.getBoundingClientRect();$(window).on("resize",function(a){this.rect=this.canvas.getBoundingClientRect();this.canvas.width=this.rect.width;this.canvas.height=this.rect.height;this.width=this.rect.width;this.height=this.rect.height;this.buffer=this.context.createImageData(this.width,this.height)}.bind(this));this.canvas.width=this.rect.width;this.canvas.height=this.rect.height;this.width=this.rect.width;this.height=this.rect.height;this.pixelImageData=
-this.context.createImageData(1,1);this.buffer=this.context.createImageData(this.width,this.height)}_createClass(b,[{key:"drawPixel",value:function(a){this.pixelImageData.data[0]=a.r;this.pixelImageData.data[1]=a.g;this.pixelImageData.data[2]=a.b;this.pixelImageData.data[3]=a.a;this.context.putImageData(this.pixelImageData,a.x,a.y)}},{key:"drawPixelToBuffer",value:function(a){var b=4*(a.x+a.y*this.width)-4;this.buffer.data[b]=a.r;this.buffer.data[b+1]=a.g;this.buffer.data[b+2]=a.b;this.buffer.data[b+
-3]=a.a}},{key:"flushBuffer",value:function(){this.context.putImageData(this.buffer,0,0)}},{key:"clearBuffer",value:function(){this.buffer=this.context.createImageData(this.width,this.height)}},{key:"drawLine",value:function(a){this.context.beginPath();this.context.moveTo(a.x1,a.y1);this.context.lineTo(a.x2,a.y2);this.context.stroke()}}]);return b}();"use strict";
-_createClass=function(){function b(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1;d.configurable=!0;"value"in d&&(d.writable=!0);Object.defineProperty(a,d.key,d)}}return function(a,e,c){e&&b(a.prototype,e);c&&b(a,c);return a}}();function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}
-var Camera=function(){function b(a){_classCallCheck(this,b);this.e={x:0,y:0,z:0,h:1};this.u={};this.v={};this.n={};this.N=.5;this.F=100;this.M={};this.S1T1Mp={};this.WS2T2={};this.world={};this.e=a.position;this.g=a.gaze;this.width=a.width;this.height=a.height;this.setupVectors=function(){this.x=this.width;this.y=this.height;this.aspect=this.width/this.height;this.theta=a.viewingAngle;this.world=a.world;var b=Math3D.vectorizePoints(this.g,this.e),c=1/Math3D.magnitudeOfVector(b);this.n=Math3D.scalarMultiply(b,
-c);this.u=Math3D.crossProduct({x:0,y:1,z:0,h:0},this.n);this.u=Math3D.scalarMultiply(this.u,-1);this.v=Math3D.crossProduct(this.n,this.u);this.t=this.N*Math.tan(Math.PI/180*(this.theta/2));this.b=-this.t;this.r=this.aspect*this.t;this.l=-this.r;this.updateMatrixPipe()}.bind(this);this.setupVectors();this.debug=!1;a.noPipe&&(this.noPipe=!0)}_createClass(b,[{key:"moveU",value:function(a){a=Math3D.scalarMultiply(this.u,a);this.e=Math3D.addPoints(a,this.e);this.updateMatrixPipe()}},{key:"moveV",value:function(a){a=
-Math3D.scalarMultiply(this.v,a);this.e=Math3D.addPoints(a,this.e);this.updateMatrixPipe()}},{key:"moveN",value:function(a){a=Math3D.scalarMultiply(this.n,a);this.e=Math3D.addPoints(a,this.e);this.updateMatrixPipe()}},{key:"rotateU",value:function(a){a=Math3D.rotateOnArbitrary(a,this.u);this.v=multiplyMatrixWithVector(a,this.v);this.n=multiplyMatrixWithVector(a,this.n)}},{key:"rotateV",value:function(a){a=Math3D.rotateOnArbitrary(a,this.v);this.u=multiplyMatrixWithVector(a,this.u);this.n=multiplyMatrixWithVector(a,
-this.n)}},{key:"rotateN",value:function(a){a=Math3D.rotateOnArbitrary(a,this.n);this.u=multiplyMatrixWithVector(a,this.u);this.v=multiplyMatrixWithVector(a,this.v)}},{key:"updateMatrixPipe",value:function(){if(!this.noPipe){this.WS2T2=this.computeWS2T2();this.debug&&console.log(matrixToString(this.WS2T2));this.S1T1Mp=this.computeS1T1Mp();this.debug&&console.log(matrixToString(this.S1T1Mp));this.Mv=this.computeMv();this.debug&&console.log(matrixToString(this.Mv));var a=Math3D.multiplyMatrices(this.WS2T2,
-this.S1T1Mp);this.debug&&console.log(matrixToString(a));this.matrixPipe=Math3D.multiplyMatrices(a,this.Mv);this.debug&&console.log(matrixToString(this.matrixPipe))}}},{key:"computeWS2T2",value:function(){var a=Math3D.initMatrix(),b=this.width,c=this.height;a[0][0]=b/2;a[0][1]=0;a[0][2]=0;a[0][3]=b/2;a[1][0]=0;a[1][1]=-c/2;a[1][2]=0;a[1][3]=-c/2+c;a[2][0]=0;a[2][1]=0;a[2][2]=1;a[2][3]=0;a[3][0]=0;a[3][1]=0;a[3][2]=0;a[3][3]=1;return a}},{key:"computeS1T1Mp",value:function(){var a=Math3D.initMatrix(),
-b=this.t,c=this.b,d=this.r,f=this.l,g=this.N,h=this.F;a[0][0]=2*g/(d-1);a[0][1]=0;a[0][2]=(d+f)/(d-f);a[0][3]=0;a[1][0]=0;a[1][1]=2*g/(b-c);a[1][2]=(b+c)/(b-c);a[1][3]=0;a[2][0]=0;a[2][1]=0;a[2][2]=-(h+g)/(h-g);a[2][3]=-2*h*g/(h-g);a[3][0]=0;a[3][1]=0;a[3][2]=-1;a[3][3]=0;return a}},{key:"computeMv",value:function(){var a=Math3D.initMatrix(),b=this.u,c=this.v,d=this.n,f=this.e;a[0][0]=b.x;a[0][1]=b.y;a[0][2]=b.z;a[0][3]=-Math3D.dotProduct(f,b);a[1][0]=c.x;a[1][1]=c.y;a[1][2]=c.z;a[1][3]=-Math3D.dotProduct(f,
-c);a[2][0]=d.x;a[2][1]=d.y;a[2][2]=d.z;a[2][3]=-Math3D.dotProduct(f,d);a[3][0]=0;a[3][1]=0;a[3][2]=0;a[3][3]=1;return a}}]);return b}();"use strict";_createClass=function(){function b(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1;d.configurable=!0;"value"in d&&(d.writable=!0);Object.defineProperty(a,d.key,d)}}return function(a,e,c){e&&b(a.prototype,e);c&&b(a,c);return a}}();
-function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}
-var GenericObject=function(){function b(a){_classCallCheck(this,b);if(a)for(var e in a)this[e]=a[e];this.baseC||(this.baseC={r:100,g:100,b:100,a:255});this.ambientC||(this.ambientC=this.baseC);this.diffuseC||(this.diffuseC=this.baseC);this.specularC||(this.specularC=this.baseC);this.ambientFactor||(this.ambientFactor=.1);this.diffuseFactor||(this.diffuseFactor=.75);this.specularFactor||(this.specularFactor=.9);this.reflectionFactor||(this.reflectionFactor=.4);this.refractionFactor||(this.refractionFactor=
-0);this.specularFalloff||(this.specularFalloff=50);this.refractionIndex||(this.refractionIndex=1.4);this.opacity||(this.opacity=1);this.transformInverse=this.transform?Math3D.matrixInverse(this.transform):this.transform=Matrices3D.I;this.UVMap||(this.UVMap=null)}_createClass(b,[{key:"setTransform",value:function(a){this.transform=a;this.transformInverse=Math3D.matrixInverse(this.transform)}},{key:"rayIntersect",value:function(a){}},{key:"getNormalAt",value:function(a){}},{key:"getUVMapAt",value:function(a){}}]);
-return b}();"use strict";function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}var Light=function Light(a){_classCallCheck(this,Light);this.color=a.color?a.color:{r:255,g:255,b:255,a:255};a.intensity?this.intensity=a.intensity:this.inensity=1};"use strict";
-_createClass=function(){function b(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1;d.configurable=!0;"value"in d&&(d.writable=!0);Object.defineProperty(a,d.key,d)}}return function(a,e,c){e&&b(a.prototype,e);c&&b(a,c);return a}}();function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}
-var Ray=function(){function b(a){_classCallCheck(this,b);if(a.camera){this.x=a.x;this.y=a.y;this.camera=a.camera;this.superSampleRate=a.superSampleRate?a.superSampleRate:1;this.e=a.camera.e;this.u=a.camera.u;this.v=a.camera.v;this.n=a.camera.n;this.N=a.camera.N;this.W=a.camera.r;this.H=a.camera.t;var e=Math3D.scalarMultiply(this.n,-this.N);this.a=e;var c=this.W*(2*this.x/(this.camera.width*this.superSampleRate)-1);this.bcoeff=c;this.b=c=Math3D.scalarMultiply(this.u,c);var d=this.H*(2*this.y/(this.camera.height*
-this.superSampleRate)-1);this.ccoeff=d;this.c=d=Math3D.scalarMultiply(this.v,d);this.d=Math3D.addVectors(Math3D.addVectors(e,c),d)}else if(a.objectPoint&&a.targetPoint)this.e=objectPoint,this.d=Math3D.vectorizePoints(objectPoint,targetPoint),this.d=Math3D.scalarMultiply(this.d,1/Math3D.magnitudeOfVector(this.d));else if(a.e&&a.d)this.e=a.e,this.d=a.d;else throw"Error not a valid Ray Constructor";this.depth=a.depth;this.exclusionObj=a.exclusionObj?a.exclusionObj:{};this.lowestIntersectValue=0;this.lowestIntersectPoint=
-this.lowestIntersectObject=null;this.intersectedObjects=[];this.intersectedObject=!1}_createClass(b,[{key:"addIntersect",value:function(a){if(a.obj!=this.exclusionObj)if(a.t&&a.obj){var b=Math3D.scalarMultiply(this.d,a.t),b=Math3D.addPoints(this.e,b);!this.intersectedObject&&0>a.t?(this.lowestIntersectValue=a.t,this.lowestIntersectObject=a.obj,this.lowestIntersectPoint=b,this.intersectedObjects.push(a.obj),this.intersectedObject=!0):a.t>this.lowestIntersectValue&&0>a.t&&(this.lowestIntersectValue=
-a.t,this.lowestIntersectObject=a.obj,this.lowestIntersectPoint=b)}else throw"Not a valid addIntersect";}},{key:"rayDetect",value:function(a){var b=0;0!=this.d.x?b=a.x-this.e.x/this.d.x:0!=this.d.y?b=a.y-this.e.y/this.d.y:0!=this.d.z&&(b=a.z-this.e.z/thid.d.z);return b}}]);return b}();"use strict";
-_createClass=function(){function b(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1;d.configurable=!0;"value"in d&&(d.writable=!0);Object.defineProperty(a,d.key,d)}}return function(a,e,c){e&&b(a.prototype,e);c&&b(a,c);return a}}();function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}
-var Raytracer=function(){function b(a){var e=this;_classCallCheck(this,b);this.world=a.world;this.world.some(function(a){a instanceof Camera&&(e.camera=a)});if(!this.camera)throw"World Does not have a Camera!";this.pixelRenderer=a.pixelRenderer;this.backgroundColor={r:0,g:0,b:0,a:255};this.color={r:100,g:100,b:100,a:255};this.falloffFactor=10;this.recursionFactor=4;this.drawTitle()}_createClass(b,[{key:"drawTitle",value:function(){var a=this.pixelRenderer.height,b=this.pixelRenderer.context,c=this.pixelRenderer.width/
-2,d=2/3*a;b.font="30pt Helvetica,Arial,sans-serif";b.textAlign="center";b.fillStyle="Black";b.fillText("Raytracer-JS",c,1/3*a);b.font="15pt Helvetica,Arial,sans-serif";b.fillText("Version 0.0.1 By SparkX120",c,d)}},{key:"drawRenderingPlaceholder",value:function(){var a=this.pixelRenderer.width,b=this.pixelRenderer.height,c=this.pixelRenderer.context;c.fillStyle="rgba(255,255,255,1)";c.fillRect(0,0,a,b);this.progress=document.createElement("progress");this.progress.max=100;this.progress.value=0;this.progress.style.zindex=
-"99";this.progress.style.width="100%";this.progress.style.height="3em";this.progress.style.bottom="50%";this.progress.style.position="absolute";this.progress.style.border="1px solid black";this.progress.className="prog";this.pixelRenderer.container&&this.pixelRenderer.container.appendChild(this.progress)}},{key:"getObjectList",value:function(){return this.world.filter(function(a){return a instanceof GenericObject})}},{key:"getLightList",value:function(){return this.world.filter(function(a){return a instanceof
-Light})}},{key:"render",value:function(){var a=this;this.drawRenderingPlaceholder();setTimeout(function(){a.pixelRenderer.clearBuffer();a.camera.width=a.pixelRenderer.width;a.camera.height=a.pixelRenderer.height;a.camera.setupVectors();var b=0,c=setInterval(function(){if(b<a.camera.y){b++;for(var d=0;d<a.camera.x;d++){var f=new Ray({x:d,y:b,camera:a.camera,depth:0}),f=a.raytrace(f);f.x=d;f.y=b;a.pixelRenderer.drawPixel(f)}d=Math.floor(b/a.camera.y*100);a.progress&&a.progress.value!=d&&(a.progress.value=
-d)}else a.progress&&(a.pixelRenderer.container.removeChild(a.progress),a.progress=null),clearTimeout(c)},1)},10)}},{key:"raytrace",value:function(a){var b=this.getObjectList();this.getLightList();b.map(function(b){b.rayIntersect(a)});if(a.intersectedObject){var c=a.lowestIntersectObject,b=c.ambientFactor,d=c.diffuseFactor,f=c.specularFactor,g=c.reflectionFactor,h=c.ambientC,l={r:0,g:0,b:0,a:0},k={r:0,g:0,b:0,a:0},m={r:0,g:0,b:0,a:0};this.getLightList()&&(0<c.diffuseFactor&&(l=this._diffuseShader(a)),
-0<c.specularColor&&(k=this._specularShader(a)),0<c.reflectionFactor&&(m=this._reflectionShader(a)));var p=h.g*b+l.g*d+k.g*f+m.g*g,n=h.b*b+l.b*d+k.b*f+m.b*g,c=255*c.opacity;return{r:Math.min(h.r*b+l.r*d+k.r*f+m.r*g,255),g:Math.min(p,255),b:Math.min(n,255),a:Math.min(c,255)}}return{r:this.backgroundColor.r,g:this.backgroundColor.g,b:this.backgroundColor.b,a:this.backgroundColor.a}}},{key:"_diffuseShader",value:function(a){var b=this,c=a.lowestIntersectObject,d=a.lowestIntersectPoint,f=c.getNormalAt(d),
-g=0;this.getLightList()&&this.getLightList().map(function(h,l,k){k=Math3D.vectorizePoints(d,h.source);Math3D.vectorizePoints(d,a.e);l=Math3D.dotProduct(f,k);var m=new Ray({e:d,d:k,exclusionObj:c});b.getObjectList().map(function(a){a.rayIntersect(m)});m.intersectedObject||(k=Math3D.magnitudeOfVector(k)*Math3D.magnitudeOfVector(f),0!=k&&(h=h.intensity*Math.max(l/k,0),g+=h))});return{r:c.diffuseC.r*g,g:c.diffuseC.g*g,b:c.diffuseC.b*g,a:255}}},{key:"_specularShader",value:function(a){var b=this,c=a.lowestIntersectObject,
-d=a.lowestIntersectPoint,f=c.getNormalAt(d),g=0;this.getLightList()&&this.getLightList().map(function(h,l,k){k=Math3D.vectorizePoints(d,h.source);l=Math3D.vectorizePoints(d,a.e);var m=Math3D.dotProduct(f,k),p=new Ray({e:d,d:k,exclusionObj:c});b.getObjectList().map(function(a){a.rayIntersect(p)});if(!p.intersectedObject){var n=Math3D.magnitudeOfVector(f),m=m/(n*n)*2,n=Math3D.addVectors(Math3D.scalarMultiply(k,-1),Math3D.scalarMultiply(f,m));k=c.specularFalloff;m=0;l=Math3D.dotProduct(l,n)/(Math3D.magnitudeOfVector(l)*
-Math3D.magnitudeOfVector(n));0<l&&(m=h.intensity*Math.max(Math.pow(l,k),0));g+=m}});return{r:c.specularC.r*g,g:c.specularC.g*g,b:c.specularC.b*g,a:255}}},{key:"_reflectionShader",value:function(a){var b=a.lowestIntersectObject,c=a.lowestIntersectPoint,d=b.getNormalAt(c),f=Math3D.dotProduct(Math3D.normalizeVector(a.d),Math3D.normalizeVector(d));return 0<b.reflectionFactor&&a.depth<this.recursionFactor&&0>f?(d=Math3D.scalarMultiply(d,-2*f),d=Math3D.normalizeVector(d),a=new Ray({e:c,d:d,depth:a.depth+
-1,exclusionObj:b}),a=this.raytrace(a),{r:a.r,g:a.g,b:a.b,a:255}):this.backgroundColor}}]);return b}();"use strict";var _get=function(b,a,e){var c=!0;for(;c;)if(null===b&&(b=Function.prototype),c=Object.getOwnPropertyDescriptor(b,a),void 0===c){b=Object.getPrototypeOf(b);if(null===b)break;c=!0}else{if("value"in c)return c.value;a=c.get;return void 0===a?void 0:a.call(e)}};function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}
-function _inherits(b,a){if("function"!==typeof a&&null!==a)throw new TypeError("Super expression must either be null or a function, not "+typeof a);b.prototype=Object.create(a&&a.prototype,{constructor:{value:b,enumerable:!1,writable:!0,configurable:!0}});a&&(Object.setPrototypeOf?Object.setPrototypeOf(b,a):b.__proto__=a)}
-var OmniLight=function(b){function a(b){_classCallCheck(this,a);_get(Object.getPrototypeOf(a.prototype),"constructor",this).call(this,b);if(b.source)this.source=b.source;else throw"Please define source in config for OmniLight";}_inherits(a,b);return a}(Light);"use strict";
-_createClass=function(){function b(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1;d.configurable=!0;"value"in d&&(d.writable=!0);Object.defineProperty(a,d.key,d)}}return function(a,e,c){e&&b(a.prototype,e);c&&b(a,c);return a}}();_get=function(b,a,e){var c=!0;for(;c;)if(null===b&&(b=Function.prototype),c=Object.getOwnPropertyDescriptor(b,a),void 0===c){b=Object.getPrototypeOf(b);if(null===b)break;c=!0}else{if("value"in c)return c.value;a=c.get;return void 0===a?void 0:a.call(e)}};
-function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}function _inherits(b,a){if("function"!==typeof a&&null!==a)throw new TypeError("Super expression must either be null or a function, not "+typeof a);b.prototype=Object.create(a&&a.prototype,{constructor:{value:b,enumerable:!1,writable:!0,configurable:!0}});a&&(Object.setPrototypeOf?Object.setPrototypeOf(b,a):b.__proto__=a)}
-var Plane=function(b){function a(b){_classCallCheck(this,a);_get(Object.getPrototypeOf(a.prototype),"constructor",this).call(this,b);b.restricted&&(this.restricted=b.restricted)}_inherits(a,b);_createClass(a,[{key:"rayIntersect",value:function(a){var b=a.d,d=Math3D.multiplyVectorByMatrix(this.transformInverse,a.e),f=Math3D.multiplyVectorByMatrix(this.transformInverse,b);if(0!=f.z&&(b=-(d.z/f.z),0>b))if(this.restricted){var g=d.x+f.x*b,d=d.y+f.y*b;1>=Math.sqrt(g*g+d*d)&&a.addIntersect({t:b,obj:this})}else a.addIntersect({t:b,
-obj:this})}},{key:"getNormalAt",value:function(a){a={x:0,y:0,z:-1,h:1};return a=Math3D.multiplyVectorByMatrix(this.transform,a)}},{key:"getUVMapAt",value:function(a){return{r:0,g:0,b:0,a:0}}}]);return a}(GenericObject);"use strict";_createClass=function(){function b(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1;d.configurable=!0;"value"in d&&(d.writable=!0);Object.defineProperty(a,d.key,d)}}return function(a,e,c){e&&b(a.prototype,e);c&&b(a,c);return a}}();
-_get=function(b,a,e){var c=!0;for(;c;)if(null===b&&(b=Function.prototype),c=Object.getOwnPropertyDescriptor(b,a),void 0===c){b=Object.getPrototypeOf(b);if(null===b)break;c=!0}else{if("value"in c)return c.value;a=c.get;return void 0===a?void 0:a.call(e)}};function _classCallCheck(b,a){if(!(b instanceof a))throw new TypeError("Cannot call a class as a function");}
-function _inherits(b,a){if("function"!==typeof a&&null!==a)throw new TypeError("Super expression must either be null or a function, not "+typeof a);b.prototype=Object.create(a&&a.prototype,{constructor:{value:b,enumerable:!1,writable:!0,configurable:!0}});a&&(Object.setPrototypeOf?Object.setPrototypeOf(b,a):b.__proto__=a)}
-var Sphere=function(b){function a(b){_classCallCheck(this,a);_get(Object.getPrototypeOf(a.prototype),"constructor",this).call(this,b)}_inherits(a,b);_createClass(a,[{key:"rayIntersect",value:function(a){var b=a.d,d=Math3D.multiplyVectorByMatrix(this.transformInverse,a.e),f=Math3D.multiplyVectorByMatrix(this.transformInverse,b),g={x:d.x,y:d.y,z:d.z,h:0},b=Math3D.magnitudeOfVector(f),g=Math3D.magnitudeOfVector(g),b=b*b,d=Math3D.dotProduct(d,f),g=d*d-b*(g*g-1);0==g&&a.addIntersect(d/b,this);0<g&&(f=
--d/b+Math.sqrt(g)/b,d=-d/b-Math.sqrt(g)/b,a.addIntersect({t:f,obj:this}),a.addIntersect({t:d,obj:this}))}},{key:"getNormalAt",value:function(a){a=Math3D.multiplyVectorByMatrix(this.transformInverse,a);a={x:-a.x,y:-a.y,z:-a.z,h:0};a=Math3D.normalizeVector(a);return a=Math3D.multiplyVectorByMatrix(this.transform,a)}},{key:"getUVMapAt",value:function(a){return{r:0,g:0,b:0,a:0}}}]);return a}(GenericObject);"use strict";
-(function(){window.canvas2D=new Canvas2D;$(window).on("load",function(){var b=new Camera({position:{x:0,y:5,z:5,h:1},gaze:{x:0,y:0,z:0,h:1},width:canvas2D.width,height:canvas2D.height,viewingAngle:90,world:null,noPipe:!1}),a=new Sphere({baseC:{r:0,g:0,b:255,a:255},specularC:{r:255,g:255,b:255,a:255},transform:[[1,0,0,2],[0,1,0,0],[0,0,1,0],[0,0,0,1]]}),e=new Sphere({baseC:{r:0,g:0,b:255,a:255},specularC:{r:255,g:255,b:255,a:255},transform:[[1,0,0,0],[0,1,0,2],[0,0,1,0],[0,0,0,1]]}),c=new Sphere({baseC:{r:0,
-g:0,b:255,a:255},specularC:{r:255,g:255,b:255,a:255},transform:[[1,0,0,-2],[0,1,0,0],[0,0,1,0],[0,0,0,1]]}),d=new Sphere({baseC:{r:0,g:0,b:255,a:255},specularC:{r:255,g:255,b:255,a:255},transform:[[1,0,0,0],[0,1,0,-2],[0,0,1,0],[0,0,0,1]]}),f=new Plane({baseC:{r:100,g:100,b:100,a:255},diffuseFactor:.8,specularFactor:1E-4,reflectionFactor:1E-4,transform:[[1,0,0,0],[0,1,0,0],[0,0,1,-1],[0,0,0,1]]}),g=new OmniLight({intensity:1,source:{x:0,y:0,z:1,h:1}}),h=[];h.push(b);h.push(a);h.push(e);h.push(c);
-h.push(d);h.push(f);h.push(g);var l=new Raytracer({world:h,pixelRenderer:window.canvas2D});console.log(l);setTimeout(function(){return l.render()},2E3);$(window).on("resize",function(){l.render()})})})();
+/**
+ * Matrix Math 
+ * 
+ * Matrices are defined as
+ * [[1,0,0,0],
+ *  [0,1,0,0],
+ *  [0,0,1,0],
+ *  [0,0,0,1]]
+ *
+ * Vectors and Points are defined as
+ * {x:0, y:0, z:0, h:0}
+ *
+ * @author  James Wake (Sparkx120)
+ * @version 1.0 (2015/07)
+ * @license MIT
+ */
+function Math3D() {};
+
+Math3D.transformPipe = function (matrixPipe) {
+	var data = Matrices3D.I;
+
+	for (let i = 0; i < matrixPipe.length; i++) {
+		data = Math3D.multiplyMatrices(data, matrixPipe[i]);
+	}
+
+	return data;
+};
+
+Math3D.scale = function (xf, yf, zf) {
+	var data = Math3D.initMatrix(4, 4);
+
+	//Setup Scale Matrix
+	data[0][0] = xf;data[0][1] = 0;data[0][2] = 0;data[0][3] = 0;
+	data[1][0] = 0;data[1][1] = yf;data[1][2] = 0;data[1][3] = 0;
+	data[2][0] = 0;data[2][1] = 0;data[2][2] = zf;data[2][3] = 0;
+	data[3][0] = 0;data[3][1] = 0;data[3][2] = 0;data[3][3] = 1;
+
+	return data;
+};
+
+Math3D.translate = function (x, y, z) {
+	var data = Math3D.initMatrix(4, 4);
+
+	//Setup Scale Matrix
+	data[0][0] = 1;data[0][1] = 0;data[0][2] = 0;data[0][3] = x;
+	data[1][0] = 0;data[1][1] = 1;data[1][2] = 0;data[1][3] = y;
+	data[2][0] = 0;data[2][1] = 0;data[2][2] = 1;data[2][3] = z;
+	data[3][0] = 0;data[3][1] = 0;data[3][2] = 0;data[3][3] = 1;
+
+	return data;
+};
+
+Math3D.rotateOnArbitrary = function (deg, axis) {
+	//Preconfig
+	var cos = Math.cos(Math.PI / 180 * deg);
+	var sin = Math.sin(Math.PI / 180 * deg);
+	var v = Math3D.normalizeVector(axis);
+
+	var data = Math3D.initMatrix(4, 4);
+
+	//Setup Jv Matrix
+	data[0][0] = 0;data[0][1] = -v.z();data[0][2] = v.y();data[0][3] = 0;
+	data[1][0] = v.z();data[1][1] = 0;data[1][2] = -v.x();data[1][3] = 0;
+	data[2][0] = -v.y();data[2][1] = v.x();data[2][2] = 0;data[2][3] = 0;
+	data[3][0] = 0;data[3][1] = 0;data[3][2] = 0;data[3][3] = 1;
+
+	var R = Math3D.addMatrix(Matrices3D.I, MatrixMath3D.addMatrix(Math3D.scalarMultiplyMatrix(data, sin)), Math3D.scalarMultiplyMatrix(Math3D.multiplyMatrices(data, data), 1 - cos));
+
+	return R;
+};
+
+/**
+ * Vectorizes two points
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} pointA	The start point
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} pointB	The end point
+ * @return {{x:Number, y:Number, z:Number, h:Number}} 			The Vector represented by these two points
+ */
+Math3D.vectorizePoints = function (pointA, pointB) {
+	var v = Math3D.subtractPoints(pointA, pointB);
+	v.h = 0;
+	return v;
+};
+
+/**
+ * Compute the cross product of two vectors
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} a	Vector A
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} b	Vector B
+ * @return {{x:Number, y:Number, z:Number, h:Number}} 	The Crossproduct Resultant
+ */
+Math3D.crossProduct = function (a, b) {
+	// if(a.h > 0 || b.h > 0){
+	// 	console.log("Point!!!");
+	// 	throw "Error Points can't be used in Crossproduct";
+	// }
+	return { x: a.y * b.z - a.z * b.y,
+		y: a.z * b.x - a.x * b.z,
+		z: a.x * b.y - a.y * b.x,
+		h: 0.0 };
+};
+
+/**
+ * Compute the dot product of two vectors
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} a	Vector A
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} b	Vector B
+ * @return {Number} 									The Crossproduct Resultant
+ */
+Math3D.dotProduct = function (a, b) {
+	return a.x * b.x + a.y * b.y + a.z * b.z + a.h * b.h;
+};
+
+/**
+ * Scalar Multiply a point of vector
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} v  	The point or vector to multiple
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} mag	The magnitude to multiple
+ * @return {{x:Number, y:Number, z:Number, h:Number}}     	The new point
+ */
+Math3D.scalarMultiply = function (v, mag) {
+	return { x: v.x * mag,
+		y: v.y * mag,
+		z: v.z * mag,
+		h: v.h * mag };
+};
+
+/**
+ * Compute the magnitude of a Vecotr
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} v	The vector to find the magnitude of
+ * @return {Number}        								The Magnitude
+ */
+Math3D.magnitudeOfVector = function (v) {
+	return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.h * v.h);
+};
+
+/**
+ * Adds two points A+B
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} a	First point to add 
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} b	Second point to add
+ * @return {{x:Number, y:Number, z:Number, h:Number}} 	The resultant point
+ */
+Math3D.addPoints = function (a, b) {
+	return { x: a.x + b.x,
+		y: a.y + b.y,
+		z: a.z + b.z,
+		h: a.h + b.h };
+};
+
+/**
+ * Adds two vectors A+B
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} a	First vector to add 
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} b	Second vector to add
+ * @return {{x:Number, y:Number, z:Number, h:Number}} 	The resultant vector
+ */
+Math3D.addVectors = function (a, b) {
+	return Math3D.addPoints(a, b);
+};
+
+/**
+ * Subtracts two points A-B
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} a	The point to subtract from
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} b	The point being substracted from a
+ * @return {{x:Number, y:Number, z:Number, h:Number}} 	The resultant point
+ */
+Math3D.subtractPoints = function (a, b) {
+	return { x: a.x - b.x,
+		y: a.y - b.y,
+		z: a.z - b.z,
+		h: 1.0 };
+};
+
+Math3D.normalizeVector = function (v) {
+	var out = {};
+	var mag = Math3D.magnitudeOfVector(v);
+	out = Math3D.scalarMultiply(v, 1 / mag);
+
+	return out;
+};
+
+/**
+ * Initializes a Zeroed 4x4 Matrix
+ * @return {Array<Number[]>} The Zeroed Matrix
+ */
+Math3D.initMatrix = function (x, y) {
+	var m = [];
+	if (x && y) {
+		for (var i = 0; i < x; i++) {
+			var r = [];
+			for (var j = 0; j < y; j++) {
+				r.push(0);
+			}
+			m.push(r);
+		}
+	} else {
+		for (var i = 0; i < 4; i++) m.push([0, 0, 0, 0]);
+	}
+	return m;
+};
+
+/**
+ * Adds two matricies together
+ * @param {Array<Number[]>} a	First Matrix to add
+ * @param {Array<Number[]>} b	Second Matrix to add
+ * @return {Array<Number[]>} 	The Resultant Matrix
+ */
+Math3D.addMatrix = function (a, b) {
+	var m = this.initMatrix();
+	for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) m[i][j] = a[i][j] + b[i][j];
+	return m;
+};
+
+/**
+ * Scalar Multiples a Matrix by a value
+ * @param  {Array<Number[]>} a	The matrix to multiply
+ * @param  {Number} mag 		The Scalar Multiple
+ * @return {Array<Number[]>}    The Result of the multiplication
+ */
+Math3D.scalarMultiplyMatrix = function (a, mag) {
+	var m = this.initMatrix();
+	for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) m[i][j] = a[i][j] * mag;
+	return m;
+};
+
+/**
+ * Multiplies two matricies together
+ * @param  {Array<Number[]>} a	First matrix to multiply
+ * @param  {Array<Number[]>} b	Second matrix to multiply
+ * @return {Array<Number[]>}  	The resultant matrix
+ */
+Math3D.multiplyMatrices = function (a, b) {
+	var m = this.initMatrix();
+	for (var i = 0; i < 4; i++) {
+		for (var j = 0; j < 4; j++) {
+			var v = 0;
+			for (var k = 0; k < 4; k++) v += a[i][k] * b[k][j];
+			m[i][j] = v;
+		}
+	}
+	return m;
+};
+
+/**
+ * Multiplies a vector or point by the matrix
+ * @param  {Array<Number[]>} m 							The matrix
+ * @param  {{x:Number, y:Number, z:Number, h:Number}} b	The vector
+ * @return {{x:Number, y:Number, z:Number, h:Number}}   The resultant vector
+ */
+Math3D.multiplyVectorByMatrix = function (m, b) {
+	return { x: b.x * m[0][0] + b.y * m[0][1] + b.z * m[0][2] + b.h * m[0][3],
+		y: b.x * m[1][0] + b.y * m[1][1] + b.z * m[1][2] + b.h * m[1][3],
+		z: b.x * m[2][0] + b.y * m[2][1] + b.z * m[2][2] + b.h * m[2][3],
+		h: b.x * m[3][0] + b.y * m[3][1] + b.z * m[3][2] + b.h * m[3][3] };
+};
+
+/**
+ * Computes a cofactor matrix
+ * @param  {Array<Number[]>} 	matrix Input Matrix
+ * @param  {Number} row    		The row to cofactor on
+ * @param  {Number} col    		The column to cofactor on
+ * @return {Array<Number[]>}    The resultant cofactor matrix
+ */
+Math3D.matrixCofactor = function (matrix, row, col) {
+	var result = this.initMatrix(matrix.length - 1, matrix.length - 1);
+	var rowPointer = 0;
+	var colPointer = 0;
+	for (var r = 0; r < result.length && rowPointer < matrix.length; r++) {
+		if (r == row) rowPointer = r + 1;
+		for (var c = 0; c < result.length && colPointer < matrix.length; c++) {
+			if (c == col) colPointer = c + 1;
+			result[r][c] = matrix[rowPointer][colPointer];
+			colPointer++;
+		}
+		colPointer = 0;
+		rowPointer++;
+	}
+	return result;
+};
+
+/**
+ * Compute the determinate of a Matrix
+ * @param  {Array<Number[]>} matrix	The Matrix
+ * @return {Number}        			Its Determinate
+ */
+Math3D.matrixDeterminate = function (matrix) {
+	if (matrix.length == 2) {
+		return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+	}
+	//Use first row
+	var determinate = 0;
+	for (var c = 0; c < matrix.length; c++) {
+		var coeffPM = Math.floor(Math.pow(-1, c));
+		determinate += coeffPM * matrix[0][c] * this.matrixDeterminate(this.matrixCofactor(matrix, 0, c));
+	}
+
+	return determinate;
+};
+
+/**
+ * Compute the transpose for the Adjugate Matrix
+ * @param  {Array<Number[]>} matrix	The Matrix
+ * @return {Array<Number[]>} 		The Transpose
+ */
+Math3D.matrixPTranspose = function (matrix) {
+	var result = this.initMatrix(matrix[0].length, matrix.length);
+	for (var i = 0; i < matrix.length; i++) {
+		for (var j = 0; j < matrix[0].length; j++) {
+			result[j][i] = matrix[i][j];
+		}
+	}
+	return result;
+};
+
+/**
+ * Compute the Adjugate Matrix
+ * @param  {Array<Number[]>} matrix	The Matrix
+ * @return {Array<Number[]>} 		The Adjugate
+ */
+Math3D.matrixAdjugate = function (matrix) {
+	if (matrix.length < 3) {
+		return null;
+	}
+
+	var result = this.initMatrix(matrix.length, matrix.length);
+
+	for (var r = 0; r < matrix.length; r++) {
+		for (var c = 0; c < matrix.length; c++) {
+			var coeffPM = Math.floor(Math.pow(-1, r + c));
+			result[r][c] = coeffPM * this.matrixDeterminate(this.matrixCofactor(matrix, r, c));
+		}
+	}
+
+	return this.matrixPTranspose(result);
+};
+
+/**
+ * Compute the inverse of this Matrix using Crammer's Rule and the Determinate
+ * @param  {Array<Number[]>} matrix	The Matrix
+ * @return {Array<Number[]>} 		The Inverse of the matrix
+ */
+Math3D.matrixInverse = function (matrix) {
+	var det = this.matrixDeterminate(matrix);
+	var adj = this.matrixAdjugate(matrix);
+	var result = this.scalarMultiplyMatrix(adj, 1 / det);
+
+	return result;
+};
+
+/**
+ * A set of predefined Matricies and Functions to build Matricies
+ * @type {Object}
+ */
+var Matrices3D = {
+	/**
+  * The Identity 4x4 Matrix
+  * @type {Array<Number[]>}
+  */
+	I: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+
+	/**
+  * Invertable Matrix A
+  * THe Inverse is below
+  * 	№	A1	A2	A3	A4
+  *	1	18	-35	-28	1
+  *	2	9	-18	-14	1
+  *	3	-2	4	3	0
+  *	4	-12	24	19	-1
+  * @type {Array<Number[]>}
+  */
+	testA: [[2, 3, 1, 5], [1, 0, 3, 1], [0, 2, -3, 2], [0, 2, 3, 1]],
+	/**
+  * The inversion of TestA
+  * @type {Array<Number[]>}
+  */
+	testAV: [[18, -35, -28, 1], [9, -18, -14, 1], [-2, 4, 3, 0], [-12, 24, 19, -1]]
+
+	/**
+  * Matrix Inversion Sanity Test
+  */
+};function matrixInversionTest() {
+	var I = Matrices3D.I;
+	var test = Matrices3D.testA;
+	console.log(matrixToString(test));
+	test = Math3D.matrixInverse(test);
+	var valid = true;
+	for (var i = 0; i < 4; i++) {
+		for (var j = 0; j < 4; j++) {
+			if (test[i][j] != Matrices3D.testAV[i][j]) valid = false;
+		}
+	}
+	console.log(valid, "\n", matrixToString(test));
+}
+
+/**
+ * Formats a matrix into a string
+ * @param  {Array<Number[]>} m The Matrix to format
+ * @return {String}   The formatted String
+ */
+function matrixToString(m) {
+	var string = "";
+	for (var i = 0; i < m.length; i++) {
+		for (var j = 0; j < m[0].length; j++) {
+			string += m[i][j] + " ";
+		}
+		string += "\n";
+	}
+	return string;
+}
+/**
+ * Canvas Wrapper object to handle pixel level drawing on the HTML5 Canvas as well as manage the canvas
+ * Automatically deploys a canvas to the body
+ *
+ * (Now in ES6)
+ * 
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/07)
+ * @license MIT
+ */
+class Canvas2D {
+	constructor() {
+		// //Create the Canvas and Deploy it
+		this.container = document.createElement('div');
+		this.canvas = document.createElement('canvas');
+		this.canvas.style.border = "1px solid black";
+		this.canvas.style.width = "100%";
+		this.canvas.style.height = "100%";
+		this.canvas.style.position = "absolute";
+		this.container.style.margin = "5%";
+		this.container.style.width = "90%";
+		this.container.style.height = "75vh";
+		this.container.style.position = "relative";
+		this.context = this.canvas.getContext('2d');
+		this.container.appendChild(this.canvas);
+		document.body.appendChild(this.container);
+
+		//Positioning and Scaling
+		this.rect = this.canvas.getBoundingClientRect();
+		$(window).on('resize', function (event) {
+			this.rect = this.canvas.getBoundingClientRect();
+			this.canvas.width = this.rect.width;
+			this.canvas.height = this.rect.height;
+			this.width = this.rect.width;
+			this.height = this.rect.height;
+			this.buffer = this.context.createImageData(this.width, this.height);
+		}.bind(this));
+		this.canvas.width = this.rect.width;
+		this.canvas.height = this.rect.height;
+		this.width = this.rect.width;
+		this.height = this.rect.height;
+		//Persistant Pixel Image Data Object
+		this.pixelImageData = this.context.createImageData(1, 1);
+		this.buffer = this.context.createImageData(this.width, this.height);
+		// this.pixelData = this.pixelImageData.data
+	}
+
+	/**
+  * Draws a pixel to this Canvas. Note that RGBA are between 0 and 255
+  * @param  {{x: Number, y: Number, r: Number, g: Number, b: Number, a: Number}} pixel The Pixel to draw
+  */
+	drawPixel(pixel) {
+		// setTimeout(function(){
+		//console.log("this Happened", pixel.r, pixel.g, pixel.b, pixel.a);
+		this.pixelImageData.data[0] = pixel.r;
+		this.pixelImageData.data[1] = pixel.g;
+		this.pixelImageData.data[2] = pixel.b;
+		this.pixelImageData.data[3] = pixel.a;
+		this.context.putImageData(this.pixelImageData, pixel.x, pixel.y);
+		// }.bind(this),0);
+	}
+
+	drawPixelToBuffer(pixel) {
+		var index = 4 * (pixel.x + pixel.y * this.width) - 4;
+		this.buffer.data[index] = pixel.r;
+		this.buffer.data[index + 1] = pixel.g;
+		this.buffer.data[index + 2] = pixel.b;
+		this.buffer.data[index + 3] = pixel.a;
+	}
+
+	flushBuffer() {
+		this.context.putImageData(this.buffer, 0, 0);
+	}
+
+	clearBuffer() {
+		this.buffer = this.context.createImageData(this.width, this.height);
+	}
+
+	drawLine(line) {
+		this.context.beginPath();
+		this.context.moveTo(line.x1, line.y1);
+		this.context.lineTo(line.x2, line.y2);
+		this.context.stroke();
+	}
+}
+/**
+ * The Camera Object (Now in ES6)
+ * @class Camera Object
+ * 
+ * @param {Object} config Configuration Object (width height viewingAngle world position gaze point)
+ *
+ * @author  James Wake (Sparkx120)
+ * @version 1.1 (2015/08)
+ * @license MIT
+ */
+class Camera {
+	constructor(config) {
+		//Camera Specific Points and Vectors
+		/**
+   * e is the Camera position
+   * u is the up vector
+   * v is the left right vector
+   * n is the gaze vector
+   */
+		this.e = { x: 0, y: 0, z: 0, h: 1 };
+		this.u = {};
+		this.v = {};
+		this.n = {};
+		//Define Near and Far Plane
+		this.N = 0.5;
+		this.F = 100;
+
+		//Matrices
+		this.M = {};
+		this.S1T1Mp = {};
+		this.WS2T2 = {};
+		this.world = {};
+
+		this.e = config.position;
+		this.g = config.gaze;
+
+		this.width = config.width;
+		this.height = config.height;
+
+		this.setupVectors = function () {
+			//Setup Camera Specifics and the world
+			this.x = this.width;
+			this.y = this.height;
+			this.aspect = this.width / this.height;
+			this.theta = config.viewingAngle;
+			this.world = config.world;
+
+			//Compute the n vector
+			var nP = Math3D.vectorizePoints(this.g, this.e);
+			var nPmag = 1 / Math3D.magnitudeOfVector(nP);
+			this.n = Math3D.scalarMultiply(nP, nPmag);
+
+			//Compute Vector u (+y axis = up)
+			var pP = { x: 0, y: 0, z: 1, h: 0 };
+			this.u = Math3D.crossProduct(pP, this.n);
+			//this.u = Math3D.scalarMultiply(this.u,-1);
+
+			//Compute Vector v
+			this.v = Math3D.crossProduct(this.n, this.u);
+
+			//Set Camera Variables
+			this.t = this.N * Math.tan(Math.PI / 180 * (this.theta / 2));
+			this.b = -this.t;
+			this.r = this.aspect * this.t;
+			this.l = -this.r;
+
+			//Setup the Matrix Pipe
+			this.updateMatrixPipe();
+		}.bind(this);
+
+		this.setupVectors();
+
+		//Setup Debug
+		this.debug = false;
+
+		if (config.noPipe) {
+			this.noPipe = true;
+		}
+	}
+
+	/**
+  * Moves camera along U Axis
+  * @param  {Number} mag Magnitude to move
+  */
+	moveU(mag) {
+		var motion = Math3D.scalarMultiply(this.u, mag);
+		this.e = Math3D.addPoints(motion, this.e);
+		this.updateMatrixPipe();
+	}
+
+	/**
+  * Moves camera along V Axis
+  * @param  {Number} mag Magnitude to move
+  */
+	moveV(mag) {
+		var motion = Math3D.scalarMultiply(this.v, mag);
+		this.e = Math3D.addPoints(motion, this.e);
+		this.updateMatrixPipe();
+	}
+
+	/**
+  * Moves camera along N Axis
+  * @param  {Number} mag Magnitude to move
+  */
+	moveN(mag) {
+		var motion = Math3D.scalarMultiply(this.n, mag);
+		this.e = Math3D.addPoints(motion, this.e);
+		this.updateMatrixPipe();
+	}
+
+	/**
+  * Rotates camera along U Axis
+  * @param  {Number} mag Magnitude to rotate (degrees)
+  */
+	rotateU(mag) {
+		var rotate = Math3D.rotateOnArbitrary(mag, this.u);
+		this.v = multiplyMatrixWithVector(rotate, this.v);
+		this.n = multiplyMatrixWithVector(rotate, this.n);
+	}
+
+	/**
+  * Rotates camera along V Axis
+  * @param  {Number} mag Magnitude to rotate (degrees)
+  */
+	rotateV(mag) {
+		var rotate = Math3D.rotateOnArbitrary(mag, this.v);
+		this.u = multiplyMatrixWithVector(rotate, this.u);
+		this.n = multiplyMatrixWithVector(rotate, this.n);
+	}
+
+	/**
+  * Rotates camera along N Axis
+  * @param  {Number} mag Magnitude to rotate (degrees)
+  */
+	rotateN(mag) {
+		var rotate = Math3D.rotateOnArbitrary(mag, this.n);
+		this.u = multiplyMatrixWithVector(rotate, this.u);
+		this.v = multiplyMatrixWithVector(rotate, this.v);
+	}
+
+	/**
+  * Updates the Matrix Pipe for the camera
+  * Pipe is currently untested
+  */
+	updateMatrixPipe() {
+		if (!this.noPipe) {
+			this.WS2T2 = this.computeWS2T2();
+			if (this.debug) {
+				console.log(matrixToString(this.WS2T2));
+			}
+
+			this.S1T1Mp = this.computeS1T1Mp();
+			if (this.debug) {
+				console.log(matrixToString(this.S1T1Mp));
+			}
+
+			this.Mv = this.computeMv();
+			if (this.debug) {
+				console.log(matrixToString(this.Mv));
+			}
+
+			var mid = Math3D.multiplyMatrices(this.WS2T2, this.S1T1Mp);
+			if (this.debug) {
+				console.log(matrixToString(mid));
+			}
+
+			this.matrixPipe = Math3D.multiplyMatrices(mid, this.Mv);
+			if (this.debug) {
+				console.log(matrixToString(this.matrixPipe));
+			}
+		}
+	}
+
+	computeWS2T2() {
+		var data = Math3D.initMatrix();
+
+		//Localize Vars
+		var width = this.width;
+		var height = this.height;
+
+		//Setup matrix array
+		data[0][0] = width / 2;data[0][1] = 0;data[0][2] = 0;data[0][3] = width / 2;
+		data[1][0] = 0;data[1][1] = -height / 2;data[1][2] = 0;data[1][3] = -height / 2 + height;
+		data[2][0] = 0;data[2][1] = 0;data[2][2] = 1;data[2][3] = 0;
+		data[3][0] = 0;data[3][1] = 0;data[3][2] = 0;data[3][3] = 1;
+
+		return data;
+	}
+
+	computeS1T1Mp() {
+		var data = Math3D.initMatrix();
+
+		//Localize Vars
+		var t = this.t;var b = this.b;var r = this.r;var l = this.l;
+		var N = this.N;var F = this.F;
+
+		//Setup matrix array
+		data[0][0] = 2 * N / (r - 1);data[0][1] = 0;data[0][2] = (r + l) / (r - l);data[0][3] = 0;
+		data[1][0] = 0;data[1][1] = 2 * N / (t - b);data[1][2] = (t + b) / (t - b);data[1][3] = 0;
+		data[2][0] = 0;data[2][1] = 0;data[2][2] = -(F + N) / (F - N);data[2][3] = -2 * F * N / (F - N);
+		data[3][0] = 0;data[3][1] = 0;data[3][2] = -1;data[3][3] = 0;
+
+		return data;
+	}
+
+	computeMv() {
+		var data = Math3D.initMatrix();
+
+		//Localize Vars
+		var u = this.u;var v = this.v;var n = this.n;var e = this.e;
+
+		//Setup matrix array
+		data[0][0] = u.x;data[0][1] = u.y;data[0][2] = u.z;data[0][3] = -Math3D.dotProduct(e, u);
+		data[1][0] = v.x;data[1][1] = v.y;data[1][2] = v.z;data[1][3] = -Math3D.dotProduct(e, v);
+		data[2][0] = n.x;data[2][1] = n.y;data[2][2] = n.z;data[2][3] = -Math3D.dotProduct(e, n);
+		data[3][0] = 0;data[3][1] = 0;data[3][2] = 0;data[3][3] = 1;
+
+		return data;
+	}
+}
+/**
+ * Generic Object is the abstract 3DObject Definition for Raytracer-JS (Now in ES6)
+ * @class  GenericObject
+ * 
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/08)
+ * @license MIT
+ */
+class GenericObject {
+	constructor(config) {
+		if (config) for (var key in config) this[key] = config[key];
+
+		if (!this.baseC) this.baseC = { r: 255, g: 255, b: 255, a: 255 };
+		if (!this.ambientC) this.ambientC = this.baseC;
+		if (!this.diffuseC) this.diffuseC = this.baseC;
+		if (!this.specularC) this.specularC = this.baseC;
+
+		if (!this.ambientFactor) this.ambientFactor = 0.0;
+		if (!this.diffuseFactor) this.diffuseFactor = 0.2;
+		if (!this.specularFactor) this.specularFactor = 0.5;
+		if (!this.reflectionFactor) this.reflectionFactor = 0.9;
+		if (!this.refractionFactor) this.refractionFactor = 0.0;
+		if (!this.specularFalloff) this.specularFalloff = 40;
+		if (!this.refractionIndex) this.refractionIndex = 1.0;
+
+		if (!this.opacity) this.opacity = 1.0;
+
+		if (!this.transform) {
+			this.transform = Matrices3D.I;
+			this.transformInverse = Matrices3D.I;
+		} else {
+			this.transformInverse = Math3D.matrixInverse(this.transform);
+		}
+
+		if (!this.UVMap) this.UVMap = null;
+	}
+
+	/**
+  * Sets the transform on this Generic Object
+  * @param {Array{Array{}}} transform The Transform
+  */
+	setTransform(transform) {
+		this.transform = transform;
+		this.transformInverse = Math3D.matrixInverse(this.transform);
+	}
+
+	//Abstract Methods
+	/**
+  * Ray Intersect the Object to see if it is in the Rays path.
+  * @param  {Ray} ray The ray to intersect
+  */
+	rayIntersect(ray) {}
+
+	/**
+  * Compute the normal vector relative to a specific point (prefrably on the surface)
+  * @param  {Object{x,y,z,h}} point The Point to compute at
+  * @return {Object{x,y,z,h}}       The Normal Vector
+  */
+	getNormalAt(point) {}
+
+	/**
+  * Get the UVMap Color at a point on the surface
+  * @param  {Object{x,y,z,h}} point The Point to compute at
+  * @return {Object{r,g,b,a}}       The Color of the UVMap pixel
+  */
+	getUVMapAt(point) {}
+}
+/**
+ * Light class (now in ES6 Standard format)
+ * This is an Abstract Class for Light Sources
+ * 
+ * @class Light
+ *
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/08)
+ * @license MIT
+ */
+class Light {
+	constructor(config) {
+		if (config.color) this.color = config.color;else this.color = { r: 255, g: 255, b: 255, a: 255 };
+		if (config.intensity) this.intensity = config.intensity;else this.inensity = 1.0;
+	}
+}
+/**
+ * Ray Object to contain data for a Ray Intersect List (Now in ES6)
+ * @class  Ray
+ * @param {Object} config See Constructor
+ * 
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/08)
+ * @license MIT
+ */
+class Ray {
+	constructor(config) {
+		//Camera Config Constructor
+		if (config.camera) {
+			//Set Position on camera view
+			this.x = config.x;
+			this.y = config.y;
+
+			this.camera = config.camera;
+
+			//Configure Supersampling
+			if (config.superSampleRate) this.superSampleRate = config.superSampleRate;else this.superSampleRate = 1;
+
+			//Setup Camera Position
+			this.e = config.camera.e;
+
+			//Setup Camera UVN Axis System
+			this.u = config.camera.u;
+			this.v = config.camera.v;
+			this.n = config.camera.n;
+
+			//Setup Camera Dimensions
+			this.N = config.camera.N;
+			this.W = config.camera.r;
+			this.H = config.camera.t;
+
+			//Compute Ray Vector
+			var a = Math3D.scalarMultiply(this.n, -this.N);
+			this.a = a;
+
+			var bcoeff = this.W * (2 * this.x / (this.camera.width * this.superSampleRate) - 1);
+			this.bcoeff = bcoeff;
+			var b = Math3D.scalarMultiply(this.u, bcoeff);
+			this.b = b;
+
+			var ccoeff = this.H * (2 * this.y / (this.camera.height * this.superSampleRate) - 1);
+			this.ccoeff = ccoeff;
+			var c = Math3D.scalarMultiply(this.v, ccoeff);
+			this.c = c;
+
+			this.d = Math3D.addVectors(Math3D.addVectors(a, b), c);
+		}
+
+		//Object Point to Target Point Constructor
+		else if (config.objectPoint && config.targetPoint) {
+				this.e = objectPoint;
+				this.d = Math3D.vectorizePoints(objectPoint, targetPoint);
+				this.d = Math3D.scalarMultiply(this.d, 1 / Math3D.magnitudeOfVector(this.d));
+			}
+
+			//Direct Config Constructor
+			else if (config.e && config.d) {
+					this.e = config.e;
+					this.d = config.d;
+				} else {
+					throw "Error not a valid Ray Constructor";
+				}
+
+		this.depth = config.depth;
+
+		if (config.exclusionObj) this.exclusionObj = config.exclusionObj;else this.exclusionObj = {};
+
+		//Setup Intersect Persistance
+		this.lowestIntersectValue = 0;
+		this.lowestIntersectObject = null;
+		this.lowestIntersectPoint = null;
+		this.intersectedObjects = [];
+
+		this.intersectedObject = false;
+	}
+
+	/**
+  * Adds an intersection on the ray.
+  * @param {Object{t, obj}} config Intersection at position t on object obj
+  */
+	addIntersect(config) {
+		if (config.obj != this.exclusionObj && config.t != 0) //Skip 0
+			if (config.t && config.obj) {
+				var dt = Math3D.scalarMultiply(this.d, config.t);
+				var intersect = Math3D.addPoints(this.e, dt);
+				// console.log("added intersect");
+
+				if (!this.intersectedObject && config.t < 0) {
+					this.lowestIntersectValue = config.t;
+					this.lowestIntersectObject = config.obj;
+					this.lowestIntersectPoint = intersect;
+					this.intersectedObjects.push(config.obj);
+					this.intersectedObject = true;
+				} else {
+					if (config.t > this.lowestIntersectValue && config.t < 0) {
+						this.lowestIntersectValue = config.t;
+						this.lowestIntersectObject = config.obj;
+						this.lowestIntersectPoint = intersect;
+					}
+				}
+			} else {
+				throw "Not a valid addIntersect";
+			}
+	}
+
+	/**
+  * Detects where a point is on the ray
+  * @param  {Object{x,y,z,h}} point The point to detect
+  * @return {Number}          The IntersectValue
+  */
+	rayDetect(point) {
+		var t = 0;
+		if (this.d.x != 0) {
+			t = point.x - this.e.x / this.d.x;
+		} else {
+			if (this.d.y != 0) {
+				t = point.y - this.e.y / this.d.y;
+			} else {
+				if (this.d.z != 0) {
+					t = point.z - this.e.z / thid.d.z;
+				}
+			}
+		}
+
+		return t;
+	}
+}
+/**
+ * Raytracer object to raytrace a world definition
+ * @param {Object} config The configuration object
+ *
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/08)
+ * @license MIT
+ */
+
+class Raytracer {
+	constructor(config) {
+		// this.camera = config.camera;
+		this.world = config.world;
+
+		this.world.some(e => {
+			if (e instanceof Camera) {
+				this.camera = e;
+			};
+		});
+		if (!this.camera) throw "World Does not have a Camera!";
+
+		this.pixelRenderer = config.pixelRenderer; //Must support function drawPixel({x, y, r, g, b, a});
+
+		this.backgroundColor = { r: 0, g: 0, b: 0, a: 255 };
+		this.color = { r: 100, g: 100, b: 100, a: 255 };
+
+		this.falloffFactor = 10;
+		this.recursionFactor = 4;
+
+		this.drawTitle();
+	}
+
+	drawTitle() {
+		var width = this.pixelRenderer.width;
+		var height = this.pixelRenderer.height;
+		var ctx = this.pixelRenderer.context;
+		var x = width / 2;
+		var y1 = height * (1 / 3);
+		var y2 = height * (2 / 3);
+
+		ctx.font = '30pt Helvetica,Arial,sans-serif';
+		ctx.textAlign = 'center';
+		ctx.fillStyle = 'Black';
+		ctx.fillText('Raytracer-JS', x, y1);
+
+		ctx.font = '15pt Helvetica,Arial,sans-serif';
+		ctx.fillText('Version 0.0.2 By SparkX120', x, y2);
+	}
+
+	drawRenderingPlaceholder() {
+		var width = this.pixelRenderer.width;
+		var height = this.pixelRenderer.height;
+		var ctx = this.pixelRenderer.context;
+		var x = width / 2;
+		var y = height / 2;
+
+		ctx.fillStyle = 'rgba(255,255,255,1)';
+		ctx.fillRect(0, 0, width, height);
+
+		this.progress = document.createElement("progress");
+		this.progress.max = 100;
+		this.progress.value = 0;
+		this.progress.style.zindex = "99";
+		this.progress.style.width = "100%";
+		this.progress.style.height = "3em";
+		this.progress.style.bottom = "50%";
+		this.progress.style.position = "absolute";
+		this.progress.style.border = "1px solid black";
+		this.progress.className = "prog";
+
+		if (this.pixelRenderer.container) this.pixelRenderer.container.appendChild(this.progress);
+	}
+
+	getObjectList() {
+		return this.world.filter(elem => elem instanceof GenericObject);
+	}
+
+	getLightList() {
+		return this.world.filter(elem => elem instanceof Light);
+	}
+
+	stop() {
+		if (this.timeint) {
+			console.log("killing render");
+			clearInterval(this.timeint);
+			this.timeint = null;
+		}
+	}
+
+	render() {
+		this.drawRenderingPlaceholder();
+
+		//Give canvas async time to update
+		var renderLoop = setTimeout(() => {
+			this.pixelRenderer.clearBuffer();
+			this.camera.width = this.pixelRenderer.width;
+			this.camera.height = this.pixelRenderer.height;
+			this.camera.setupVectors();
+
+			//Run outerloop in interval so canvas can live update
+			var i = 0;
+			this.timeint = setInterval(() => {
+				if (i < this.camera.y) {
+					i++;
+					for (var j = 0; j < this.camera.x; j++) {
+						var ray = new Ray({ x: j, y: i, camera: this.camera, depth: 0 });
+						var color = this.raytrace(ray);
+						var pixel = color;
+						pixel.x = j;
+						pixel.y = i;
+						this.pixelRenderer.drawPixel(pixel);
+					}
+					// this.pixelRenderer.flushBuffer();
+
+					//Update Progress Bar
+					var progress = Math.floor(i / this.camera.y * 100);
+					if (this.progress && this.progress.value != progress) {
+						this.progress.value = progress;
+					}
+				} else {
+					//Get rid of the Progress Bar
+					if (this.progress) {
+						this.pixelRenderer.container.removeChild(this.progress);
+						this.progress = null;
+					}
+					// this.pixelRenderer.flushBuffer();
+					clearInterval(this.timeint);
+				}
+			}, 0);
+		}, 0);
+	}
+
+	raytrace(ray, recursion, objR) {
+		if (recursion && recusion > this.recursionFactor) return { r: 0, g: 0, b: 0, a: 0 };
+
+		var objList = this.getObjectList();
+		var lightList = this.getLightList();
+
+		objList.map(obj => {
+			if (objR) {
+				//Don't intersect with self surface under recursion
+				if (objR != obj) obj.rayIntersect(ray);
+			} else {
+				obj.rayIntersect(ray);
+			}
+		});
+
+		if (ray.intersectedObject) {
+			var object = ray.lowestIntersectObject;
+
+			var ambientFactor = object.ambientFactor;
+			var diffuseFactor = object.diffuseFactor;
+			var specularFactor = object.specularFactor;
+			var reflectionFactor = object.reflectionFactor;
+			var refractionFactor = object.refractionFactor;
+
+			var ambientColor = object.ambientC;
+			var diffuseColor = { r: 0, g: 0, b: 0, a: 0 };
+			var specularColor = { r: 0, g: 0, b: 0, a: 0 };
+			var reflectionColor = { r: 0, g: 0, b: 0, a: 0 };
+			var refractionColor = { r: 0, g: 0, b: 0, a: 0 };
+
+			if (this.getLightList()) {
+				if (object.diffuseFactor > 0) diffuseColor = this._diffuseShader(ray);
+				if (object.specularFactor > 0) specularColor = this._specularShader(ray);
+				if (object.reflectionFactor > 0) reflectionColor = this._reflectionShader(ray);
+				if (object.refractionFactor > 0) {
+					refractionColor = this._refractionShader(ray, recursion);
+				}
+			}
+
+			var computedColor = {
+				r: ambientColor.r * ambientFactor + diffuseColor.r * diffuseFactor + specularColor.r * specularFactor + reflectionColor.r * reflectionFactor + refractionColor.r * refractionFactor,
+				g: ambientColor.g * ambientFactor + diffuseColor.g * diffuseFactor + specularColor.g * specularFactor + reflectionColor.g * reflectionFactor + refractionColor.g * refractionFactor,
+				b: ambientColor.b * ambientFactor + diffuseColor.b * diffuseFactor + specularColor.b * specularFactor + reflectionColor.b * reflectionFactor + refractionColor.b * refractionFactor,
+				a: object.opacity * 255
+
+				// console.log("intersect at ", i, j);
+			};return {
+				r: Math.min(computedColor.r, 255),
+				g: Math.min(computedColor.g, 255),
+				b: Math.min(computedColor.b, 255),
+				a: Math.min(computedColor.a, 255)
+			};
+		}
+
+		return {
+			r: this.backgroundColor.r,
+			g: this.backgroundColor.g,
+			b: this.backgroundColor.b,
+			a: this.backgroundColor.a
+		};
+	}
+
+	_diffuseShader(ray) {
+		var object = ray.lowestIntersectObject;
+		var intersect = ray.lowestIntersectPoint;
+		var n = object.getNormalAt(intersect);
+		var falloffFactor = this.falloffFactor;
+
+		var intensities = [];
+		var unShadowedLights = 0;
+		var totalIntensity = 0;
+
+		if (this.getLightList()) {
+			this.getLightList().map((light, index, lights) => {
+				var s = Math3D.vectorizePoints(intersect, light.source);
+				var v = Math3D.vectorizePoints(intersect, ray.e);
+				var ns = Math3D.dotProduct(n, s);
+
+				var shadowDetect = new Ray({ e: intersect, d: s, exclusionObj: object });
+				this.getObjectList().map(obj => {
+					obj.rayIntersect(shadowDetect);
+				});
+
+				if (!shadowDetect.intersectedObject) {
+					//Compute Falloff from Lightsource
+					// var distance = Math3D.magnitudeOfVector(s);
+
+					//Compute Diffuse Intensity
+					var div = Math3D.magnitudeOfVector(s) * Math3D.magnitudeOfVector(n);
+					if (div != 0) {
+						var nDots = ns / div;
+						var diffuseIntensity = light.intensity * Math.max(nDots, 0);
+						totalIntensity += diffuseIntensity;
+					}
+				}
+			});
+		}
+
+		return {
+			r: object.diffuseC.r * totalIntensity,
+			g: object.diffuseC.g * totalIntensity,
+			b: object.diffuseC.b * totalIntensity,
+			a: 255 };
+	}
+
+	_specularShader(ray) {
+		var object = ray.lowestIntersectObject;
+		var intersect = ray.lowestIntersectPoint;
+		var n = object.getNormalAt(intersect);
+		var falloffFactor = this.falloffFactor;
+
+		var intensities = [];
+		var unShadowedLights = 0;
+		var totalIntensity = 0;
+		if (this.getLightList()) {
+			this.getLightList().map((light, index, lights) => {
+				var s = Math3D.vectorizePoints(intersect, light.source);
+				var v = Math3D.vectorizePoints(intersect, ray.e);
+				var ns = Math3D.dotProduct(n, s);
+
+				var shadowDetect = new Ray({ e: intersect, d: s, exclusionObj: object });
+				this.getObjectList().map(obj => {
+					obj.rayIntersect(shadowDetect);
+				});
+				if (!shadowDetect.intersectedObject) {
+					var magN = Math3D.magnitudeOfVector(n);
+					var coeff = 2 * (ns / (magN * magN));
+
+					var r = Math3D.addVectors(Math3D.scalarMultiply(s, -1.0), Math3D.scalarMultiply(n, coeff));
+
+					var f = object.specularFalloff;
+
+					//Compute Falloff from Lightsource
+					// var distance = Math3D.magnitudeOfVector(s);
+
+					// if(distance < 1)
+					// 	distance = 1;
+
+					//Compute Specular Intensity
+					var specularIntensity = 0;
+					var vDotr = Math3D.dotProduct(v, r) / (Math3D.magnitudeOfVector(v) * Math3D.magnitudeOfVector(r));
+					if (vDotr > 0) {
+						specularIntensity = light.intensity * Math.max(Math.pow(vDotr, f), 0);
+					}
+
+					totalIntensity = totalIntensity + specularIntensity;
+				}
+			});
+			// if(totalIntensity > 0){
+			// 	console.log(totalIntensity);
+			// }
+		}
+		return {
+			r: object.specularC.r * totalIntensity,
+			g: object.specularC.g * totalIntensity,
+			b: object.specularC.b * totalIntensity,
+			a: 255 };
+	}
+
+	_reflectionShader(ray) {
+		var object = ray.lowestIntersectObject;
+		var intersect = ray.lowestIntersectPoint;
+		var norm = object.getNormalAt(intersect);
+
+		var iDotn = Math3D.dotProduct(Math3D.normalizeVector(ray.d), Math3D.normalizeVector(norm));
+		if (object.reflectionFactor > 0 && ray.depth < this.recursionFactor && iDotn < 0) {
+			//Reflection Vector
+			var coeff = -2 * iDotn;
+			var reflectionD = Math3D.scalarMultiply(norm, coeff);
+			reflectionD = Math3D.normalizeVector(reflectionD);
+
+			var incident = new Ray({ e: intersect, d: reflectionD, depth: ray.depth + 1, exclusionObj: object });
+			var reflection = this.raytrace(incident); //uses incident object detection aka this obj
+			return {
+				r: reflection.r,
+				g: reflection.g,
+				b: reflection.b,
+				a: 255 };
+		}
+
+		return this.backgroundColor;
+	}
+
+	_refractionShader(ray, recursion) {
+		var object = ray.lowestIntersectObject;
+		var intersect = ray.lowestIntersectPoint;
+		var norm = object.getNormalAt(intersect);
+
+		//Refraction Vector (assuming transitions with air)
+		//Based on math from http://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf
+		//Based on Derivation from http://www.starkeffects.com/snells-law-vector.shtml
+		var nTheta = Math3D.dotProduct(Math3D.normalizeVector(Math3D.scalarMultiply(ray.d, 1)), Math3D.normalizeVector(norm));
+		var cosNTheta = nTheta; //(float) Math.cos(nTheta);
+		var refractionIndex = object.refractionIndex;
+
+		//start with white
+		var refraction = { r: 255, g: 255, b: 255, a: 255 };
+
+		if (object.refractionIndex > 0.0) {
+			//Do Refraction Angle Computation
+			var nCrossD = Math3D.crossProduct(norm, ray.d);
+			var i = Math3D.crossProduct(norm, Math3D.crossProduct(Math3D.scalarMultiply(norm, -1), ray.d));
+			i = Math3D.scalarMultiply(i, refractionIndex);
+			var nDotn = Math3D.dotProduct(nCrossD, nCrossD);
+			var coeff = Math.sqrt(1 - refractionIndex * refractionIndex * nDotn);
+			var j = Math3D.scalarMultiply(norm, coeff);
+			var refractionD = Math3D.normalizeVector(Math3D.vectorizePoints(i, j));
+
+			//Create Refraction Ray
+			var refracted = new Ray({ e: ray.e, d: refractionD });
+
+			//Run Recursive RayTrace
+			object.rayIntersect(refracted);
+			if (refracted.intersectedObject) refracted = new Ray({ e: refracted.lowestIntersectPoint, d: ray.d });
+
+			refraction = this.raytrace(refracted, recursion + 1, object); //Detect object
+		}
+
+		return {
+			r: refraction.r,
+			g: refraction.g,
+			b: refraction.b,
+			a: 255 };
+	}
+}
+/**
+ * OmniLight class (now in ES6 Standard format)
+ * This defines an OmniDirectional Light Source
+ *
+ * @class OmniLight
+ *
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/08)
+ * @license MIT
+ */
+class OmniLight extends Light {
+  constructor(config) {
+    super(config);
+    if (config.source) this.source = config.source;else throw "Please define source in config for OmniLight";
+  }
+}
+/**
+ * Plane is a Generic Object Plane Definition for Raytracer-JS (Now in ES6)
+ * @class  Plane
+ * 
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/08)
+ * @license MIT
+ */
+class Plane extends GenericObject {
+	constructor(config) {
+		super(config);
+		if (config.restricted) this.restricted = config.restricted;
+	}
+
+	/**
+  * Ray Intersect the Object to see if it is in the Rays path.
+  * @param  {Ray} ray The ray to intersect
+  */
+	rayIntersect(ray) {
+		//Ray computation
+		var eRay = ray.e;
+		var dRay = ray.d;
+		var e = Math3D.multiplyVectorByMatrix(this.transformInverse, eRay);
+		var d = Math3D.multiplyVectorByMatrix(this.transformInverse, dRay);
+		var eVec = { x: e.x, y: e.y, z: e.z, h: 0 };
+
+		//Intersection Commputation and Additions
+		if (d.z != 0) {
+			var t = -(e.z / d.z);
+			if (t < 0) if (!this.restricted) ray.addIntersect({ t: t, obj: this });else {
+				var x = e.x + d.x * t;
+				var y = e.y + d.y * t;
+				if (Math.sqrt(x * x + y * y) <= 1) ray.addIntersect({ t: t, obj: this });
+			}
+		}
+	}
+
+	/**
+  * Compute the normal vector relative to a specific point (prefrably on the surface)
+  * @param  {Object{x,y,z,h}} point The Point to compute at
+  * @return {Object{x,y,z,h}}       The Normal Vector
+  */
+	getNormalAt(point) {
+		var norm = { x: 0, y: 0, z: -1, h: 1 };
+		norm = Math3D.multiplyVectorByMatrix(this.transform, norm);
+		return norm;
+	}
+
+	/**
+  * Get the UVMap Color at a point on the surface
+  * @param  {Object{x,y,z,h}} point The Point to compute at
+  * @return {Object{r,g,b,a}}       The Color of the UVMap pixel
+  */
+	getUVMapAt(point) {
+		return { r: 0, g: 0, b: 0, a: 0 }; //Not Implemented Yet
+	}
+}
+/**
+ * Sphere is a Generic Object Sphere Definition for Raytracer-JS (Now in ES6)
+ * @class  Sphere
+ * 
+ * @author  James Wake (SparkX120)
+ * @version 0.1 (2015/08)
+ * @license MIT
+ */
+class Sphere extends GenericObject {
+	constructor(config) {
+		super(config);
+	}
+
+	/**
+  * Ray Intersect the Object to see if it is in the Rays path.
+  * @param  {Ray} ray The ray to intersect
+  */
+	rayIntersect(ray) {
+		//Ray computation
+		var eRay = ray.e;
+		var dRay = ray.d;
+		var e = Math3D.multiplyVectorByMatrix(this.transformInverse, eRay);
+		var d = Math3D.multiplyVectorByMatrix(this.transformInverse, dRay);
+		//d = Math3D.scalarMultiply(d, -1);
+		var eVec = { x: e.x, y: e.y, z: e.z, h: 0 };
+
+		//define Spherical Geometry Intersection here
+		var magD = Math3D.magnitudeOfVector(d);
+		var magE = Math3D.magnitudeOfVector(eVec);
+
+		var a = magD * magD;
+		var b = Math3D.dotProduct(e, d);
+		var c = magE * magE - 1;
+
+		var det = b * b - a * c;
+
+		// if(det>=0){
+		// 	console.log("intersect");
+		// }
+		// else{
+		// 	console.log('no intersect', ray, dRay, d, magD, eRay, eVec, magE, a, b, c, det);
+		// }
+
+		// Intersection Calculations and Intersection Additions
+		if (det == 0) {
+			var t = b / a;
+			ray.addIntersect(t, this);
+		}
+
+		if (det > 0) {
+			var t1 = -b / a + Math.sqrt(det) / a;
+			var t2 = -b / a - Math.sqrt(det) / a;
+			ray.addIntersect({ t: t1, obj: this });
+			ray.addIntersect({ t: t2, obj: this });
+		}
+	}
+
+	/**
+  * Compute the normal vector relative to a specific point (prefrably on the surface)
+  * @param  {Object{x,y,z,h}} point The Point to compute at
+  * @return {Object{x,y,z,h}}       The Normal Vector
+  */
+	getNormalAt(point) {
+		var p = Math3D.multiplyVectorByMatrix(this.transformInverse, point);
+		var norm = { x: -p.x, y: -p.y, z: -p.z, h: 0 };
+		norm = Math3D.normalizeVector(norm);
+		norm = Math3D.multiplyVectorByMatrix(this.transform, norm);
+		return norm;
+	}
+
+	/**
+  * Get the UVMap Color at a point on the surface
+  * @param  {Object{x,y,z,h}} point The Point to compute at
+  * @return {Object{r,g,b,a}}       The Color of the UVMap pixel
+  */
+	getUVMapAt(point) {
+		return { r: 0, g: 0, b: 0, a: 0 }; //Not Implemented Yet
+	}
+}
+(function () {
+	//Canvas
+	window.canvas2D = new Canvas2D();
+
+	//Wait for Window load to build system
+	$(window).on("load", () => {
+		//Camera
+		var camera = new Camera({
+			position: { x: 2, y: 2, z: 2, h: 1 },
+			gaze: { x: 0, y: 0, z: 0, h: 1 },
+			width: canvas2D.width,
+			height: canvas2D.height,
+			viewingAngle: 60,
+			world: null,
+			noPipe: true
+		});
+
+		//Scene Object Defs
+
+		//World List
+		var world = [];
+		world.push(camera);
+
+		// var scale = 0.1;
+		// var scaleF = 0.01;
+		// var jitter = 0.1
+		// var xsphere = 0.5;
+		// var ysphere = 0.5;
+		// var zsphere = 1;
+		// var fsphere = 0.25;
+
+		//Scale of Sphere
+		let scale = 0.2;
+		//Scale of jitter of scale
+		let scaleF = 0.0;
+		//Spatial Jitter
+		let jitter = 0;
+		//Size of x in +/-0
+		let xsphere = 0.5;
+		//Size of y in +/-0
+		let ysphere = 0.5;
+		//Size of z in 0+
+		let zsphere = 1;
+		//Step in x,y,z
+		let fsphere = 0.5;
+
+		for (let i = -xsphere; i <= xsphere; i = i + fsphere) {
+			for (let j = -ysphere; j <= ysphere; j = j + fsphere) {
+				for (let k = 0; k <= zsphere; k = k + fsphere) {
+					console.log("Making sphere at x:" + i + " y:" + j);
+
+					let sfact = scale * (Math.random() * scaleF + (1 - scaleF));
+					let x = i + (Math.random() * jitter - jitter);
+					let y = j + (Math.random() * jitter - jitter);
+					let z = k + (Math.random() * jitter - jitter);
+					let pipe = [Math3D.translate(x, y, z), Math3D.scale(sfact, sfact, sfact)];
+					// let mat = Math3D.transformPipe(pipe);
+					// console.log(mat);
+
+					world.push(new Sphere({
+						baseC: { r: 0, g: 0, b: 255, a: 255 },
+						specularC: { r: 255, g: 255, b: 255, a: 255 },
+						transform: Math3D.transformPipe(pipe)
+					})); //Create Generic Sphere
+				}
+			}
+		}
+
+		// world.push(new Sphere({
+		// 	baseC: {r:0, g:0, b:255, a:255},
+		// 	specularC: {r:255, g:255, b:255, a:255},
+		// 	transform: Math3D.translate(2, 2, 0.5)
+		// })); //Create Generic Sphere
+		// world.push(new Sphere({
+		// 	baseC: {r:0, g:0, b:255, a:255},
+		// 	specularC: {r:255, g:255, b:255, a:255},
+		// 	transform: Math3D.transformPipe([
+		// 				Math3D.translate(-1, -1, 0.5),
+		// 				Math3D.scale(0.5, 0.5, 0.5)
+		// 			])
+		// })); //Create Generic Sphere
+
+		var plane = new Plane({ baseC: { r: 100, g: 100, b: 100, a: 255 },
+			diffuseFactor: 0.8,
+			specularFactor: 0.0001,
+			reflectionFactor: 0.0001,
+			transform: Math3D.translate(0, 0, -1)
+		});
+
+		var olight = new OmniLight({ intensity: 2.0,
+			source: { x: 0, y: 0, z: 8, h: 1 } }); //Create an OmniLight
+
+		world.push(plane);
+		world.push(olight);
+		world.push(new OmniLight({ intensity: 1.0,
+			source: { x: 0, y: 8, z: 1, h: 1 } }), new OmniLight({ intensity: 1.0,
+			source: { x: 0, y: -8, z: 1, h: 1 } }), new OmniLight({ intensity: 1.0,
+			source: { x: 8, y: 0, z: 1, h: 1 } }), new OmniLight({ intensity: 1.0,
+			source: { x: -8, y: 0, z: 1, h: 1 } }));
+
+		var raytracer = new Raytracer({
+			world: world,
+			pixelRenderer: window.canvas2D
+		});
+
+		console.log(raytracer);
+
+		setTimeout(() => raytracer.render(), 2000); //Do this in a timeout to allow page to finish loading...
+
+		var resizeTimer;
+		$(window).on('resize', () => {
+			raytracer.stop();
+			if (resizeTimer) clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(() => raytracer.render(), 100);
+		});
+	});
+
+	// for(var x=0; x<100; x++){
+	// 	// console.log(x);
+	// 	canvas2D.drawPixel({x:x,y:x,r:0,g:0,b:0,a:255});
+	// }
+})();
+
